@@ -1,0 +1,38 @@
+*tbone.txt*  tmux basics
+
+Author:  Tim Pope <http://tpo.pe/>
+License: Same terms as Vim itself (see |license|)
+Repo:    http://github.com/tpope/vim-tbone
+
+COMMANDS                                        *tbone*
+
+These commands will be available if and only if tmux is in your PATH.
+
+                                                *tbone-:Tmux*
+:Tmux [args]            Invoke an arbitrary tmux command.
+
+                                                *tbone-:Tput*
+:[line]Tput [buffer]    Put the text from the given tmux buffer (default 0)
+                        after [line] (default current line).
+
+                                                *tbone-:Tyank*
+:[range]Tyank [buffer]  Yank [range] lines into the given tmux buffer (default
+                        new).
+
+                                                *tbone-:Twrite*
+:[range]Twrite [pane]   Take the text indicated by [range], strip leading
+                        whitespace, change newlines to carriage returns, and
+                        stuff it into [pane] using `tmux send-keys` (default
+                        previously specified).
+
+:Twrite [pane]          With no range, sends the current line without a
+                        trailing carriage return.
+
+                                                *tbone-:Tattach*
+:Tattach {session}      Force use of a particular tmux session.  You only need
+                        this if you started Vim outside of tmux.
+
+:Tattach                Revert back to the default tmux session.  You might
+                        think of this as "detaching".
+
+ vim:tw=78:et:ft=help:norl:
