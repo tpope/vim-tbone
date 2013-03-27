@@ -221,7 +221,7 @@ endfunction
 
 function! tbone#attach_command(session) abort
   unlet! s:our_session
-  let has_session = empty(system('tmux has-session -t '.shellescape(a:session)
+  let has_session = empty(system('tmux has-session -t '.shellescape(a:session)))
   if empty(a:session)
     unlet! g:tmux_session
     if has_session
