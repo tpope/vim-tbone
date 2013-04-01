@@ -1,6 +1,6 @@
 " tbone.vim - tmux basics
 " Maintainer:   Tim Pope <http://tpo.pe/>
-" Version:      1.0
+" Version:      1.1
 
 if !has('gui_running') && $TERM =~# '^\%(screen\|tmux\)' && empty(&t_ts)
   " enable window title
