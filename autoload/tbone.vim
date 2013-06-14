@@ -337,7 +337,7 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     call writefile(split(keys, "\r", 1), temp, 'b')
     let out = system('tmux load-buffer '.temp.' \; paste-buffer -d -t '.pane_id)
   else
-    let out = system('tmux send-keys -t '.pane_id.' '.shellescape(keys))
+    let out = system('tmux send-keys -t '.pane_id.' "" '.shellescape(keys))
   endif
 
   if v:shell_error
