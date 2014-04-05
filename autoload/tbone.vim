@@ -325,28 +325,41 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     let keys = get(g:, 'tbone_write_initialization', '').keys."\r"
   endif
 
-  let pane_id = tbone#pane_id(target)
-  if empty(pane_id)
-    return 'echoerr '.string("Can't find pane ".a:target)
-  elseif pane_id ==# $TMUX_PANE && !has('gui_running')
-    return 'echoerr '.string('Refusing to write to own tmux pane')
+  try
+    let pane_id = tbone#send_keys(target, keys)
+    let g:tbone_write_pane = pane_id
+    echo len(keys).' keys sent to '.pane_id
+    return ''
+  catch /.*/
+    return 'echoerr '.v:exception
+  endtry
+endfunction
+
+function! tbone#send_keys(target, keys) abort
+  if empty(a:target)
+    throw string('Target pane required')
   endif
 
-  if len(keys) > 1000
+  let pane_id = tbone#pane_id(a:target)
+  if empty(pane_id)
+    throw string("Can't find pane ".a:target)
+  elseif pane_id ==# $TMUX_PANE && !has('gui_running')
+    throw string('Refusing to write to own tmux pane')
+  endif
+
+  if len(a:keys) > 1000
     let temp = tempname()
-    call writefile(split(keys, "\r", 1), temp, 'b')
+    call writefile(split(a:keys, "\r", 1), temp, 'b')
     let out = system('tmux load-buffer '.temp.' \; paste-buffer -d -t '.pane_id)
   else
-    let out = system('tmux send-keys -t '.pane_id.' "" '.shellescape(keys))
+    let out = system('tmux send-keys -t '.pane_id.' "" '.shellescape(a:keys))
   endif
 
   if v:shell_error
-    return 'echoerr '.string('tmux: '.out[0:-2])
+    throw string('tmux: '.out[0:-2])
   endif
 
-  let g:tbone_write_pane = pane_id
-  echo len(keys).' keys sent to '.pane_id
-  return ''
+  return pane_id
 endfunction
 
 " }}}1
