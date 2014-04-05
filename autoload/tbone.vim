@@ -331,20 +331,20 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     echo len(keys).' keys sent to '.pane_id
     return ''
   catch /.*/
-    return 'echoerr '.v:exception
+    return 'echoerr '.string(v:exception)
   endtry
 endfunction
 
 function! tbone#send_keys(target, keys) abort
   if empty(a:target)
-    throw string('Target pane required')
+    throw 'Target pane required'
   endif
 
   let pane_id = tbone#pane_id(a:target)
   if empty(pane_id)
-    throw string("Can't find pane ".a:target)
+    throw "Can't find pane ".a:target
   elseif pane_id ==# $TMUX_PANE && !has('gui_running')
-    throw string('Refusing to write to own tmux pane')
+    throw 'Refusing to write to own tmux pane'
   endif
 
   if len(a:keys) > 1000
@@ -356,7 +356,7 @@ function! tbone#send_keys(target, keys) abort
   endif
 
   if v:shell_error
-    throw string('tmux: '.out[0:-2])
+    throw 'tmux: '.out[0:-2]
   endif
 
   return pane_id
