@@ -47,7 +47,7 @@ endfunction
 function! tbone#complete_panes(...) abort
   return system('tmux list-panes -F "#W.#P" -s -t '.shellescape(tbone#session())) .
         \system('tmux list-panes -F "#S:#W.#P" -a') .
-        \ "last\ntop\nbottom\nleft\nright\ntop-left\ntop-right\nbottom\left\nbottom-right"
+        \ "last\ntop\nbottom\nleft\nright\ntop-left\ntop-right\nbottom-left\nbottom-right"
 endfunction
 
 function! tbone#complete_clients(...) abort
