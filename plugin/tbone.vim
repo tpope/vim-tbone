@@ -1,6 +1,7 @@
 " tbone.vim - tmux basics
 " Maintainer:   Tim Pope <http://tpo.pe/>
 " Version:      1.1
+" GetLatestVimScripts: 4488 1 :AutoInstall: tbone.vim
 
 if !has('gui_running') && $TERM =~# '^\%(screen\|tmux\)' && empty(&t_ts)
   " enable window title
