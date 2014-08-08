@@ -316,11 +316,19 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     return 'echoerr '.string('Target pane required')
   endif
 
-  let keys = join(filter(map(
+  if &filetype=='python'
+    let keys = join(map(
+        \ getline(a:line1, a:line2),
+        \ 'substitute(v:val,"^\\s*","","")'),
+        \ "\r")
+  else
+    let keys = join(filter(map(
         \ getline(a:line1, a:line2),
         \ 'substitute(v:val,"^\\s*","","")'),
         \ "!empty(v:val)"),
         \ "\r")
+  endif
+
   if a:count > 0
     let keys = get(g:, 'tbone_write_initialization', '').keys."\r"
   endif
