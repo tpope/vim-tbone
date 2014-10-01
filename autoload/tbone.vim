@@ -316,10 +316,10 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     return 'echoerr '.string('Target pane required')
   endif
 
-  if &filetype=='python'
-    let keys = join(map(
-        \ getline(a:line1, a:line2),
-        \ 'substitute(v:val,"^\\s*","","")'),
+  " If the comment string (cms) is '#', then we try to remove the comment lines.
+  if &cms == '#%s'
+    let keys = join(filter(getline(a:line1, a:line2),
+        \ "v:val !~ '^\s*#'"),
         \ "\r")
   else
     let keys = join(filter(map(
