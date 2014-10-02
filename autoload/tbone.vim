@@ -319,7 +319,7 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
   " If the comment string (cms) is '#', then we try to remove the comment lines.
   if &cms == '#%s'
     let keys = join(filter(getline(a:line1, a:line2),
-        \ "v:val !~ '^\s*#'"),
+        \ "v:val !~ '^\\s*#'"),
         \ "\r")
   else
     let keys = join(filter(map(
