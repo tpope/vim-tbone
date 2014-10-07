@@ -316,18 +316,23 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     return 'echoerr '.string('Target pane required')
   endif
 
-  " If the comment string (cms) is '#', then we try to remove the comment lines.
+  " Remove empty lines otherwise sending multiple lines of code to ipython will cause error.
+  let l = filter(getline(a:line1, a:line2), "!empty(v:val)")
+
+  " This is the original code that deletes the leading spaces of every line.
+  " let keys = join(filter(map(
+  "   \ getline(a:line1, a:line2),
+  "   \ 'substitute(v:val,"^\\s*","","")'),
+  "   \ "!empty(v:val)"),
+  "   \ "\r")
+
+  " If the line starts with a comment symbol (cms) '#', then we try to remove this comment line.
   if &cms == '#%s'
-    let keys = join(filter(getline(a:line1, a:line2),
-        \ "v:val !~ '^\\s*#'"),
-        \ "\r")
-  else
-    let keys = join(filter(map(
-        \ getline(a:line1, a:line2),
-        \ 'substitute(v:val,"^\\s*","","")'),
-        \ "!empty(v:val)"),
-        \ "\r")
+    let keys = join(filter(l, "v:val !~ '^\\s*#'"), "\r")
   endif
+
+  " ipython REPL needs this 'return' key to commit a block of code
+  let keys .= "\r"
 
   if a:count > 0
     let keys = get(g:, 'tbone_write_initialization', '').keys."\r"
@@ -371,3 +376,4 @@ function! tbone#send_keys(target, keys) abort
 endfunction
 
 " }}}1
+" vim: set fdm=syntax ft=vim sw=2 ts=2 tw=100 :
