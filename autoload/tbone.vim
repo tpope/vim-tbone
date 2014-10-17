@@ -319,6 +319,11 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
   " Remove empty lines otherwise sending multiple lines of code to ipython will cause error.
   let l = filter(getline(a:line1, a:line2), "!empty(v:val)")
 
+  " ipython REPL needs this 'return' key to commit a block of code
+  if &ft == 'python' && len(l) > 1 && strpart(l[-1], 0, 1) == ' '
+    call add(l, "\r")
+  endif
+
   " This is the original code that deletes the leading spaces of every line.
   " let keys = join(filter(map(
   "   \ getline(a:line1, a:line2),
@@ -331,9 +336,6 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     let keys = join(filter(l, "v:val !~ '^\\s*#'"), "\r")
   endif
 
-  " ipython REPL needs this 'return' key to commit a block of code
-  let keys .= "\r"
-
   if a:count > 0
     let keys = get(g:, 'tbone_write_initialization', '').keys."\r"
   endif
@@ -341,7 +343,7 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
   try
     let pane_id = tbone#send_keys(target, keys)
     let g:tbone_write_pane = pane_id
-    echo len(keys).' keys sent to '.pane_id
+    " echo len(keys).' keys sent to '.pane_id
     return ''
   catch /.*/
     return 'echoerr '.string(v:exception)
