@@ -322,6 +322,10 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
   " ipython REPL needs this 'return' key to commit a block of code
   if &ft == 'python' && len(l) > 1 && strpart(l[-1], 0, 1) == ' '
     call add(l, "\r")
+  " F# and Ocaml needs ';;' to commit a block of code
+  elseif &ft == 'fsharp' || &ft == 'ocaml'
+    let l[-1] .= ';;'
+    let keys = join(filter(l, "v:val !~ '^\\s*//'"), "\r")
   endif
 
   " This is the original code that deletes the leading spaces of every line.
