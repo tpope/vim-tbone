@@ -368,6 +368,10 @@ function! tbone#send_keys(target, keys) abort
 
   if len(a:keys) > 1000
     let temp = tempname()
+    if has("win32unix")
+      " read/write seem faster by using the clipboard under Cygwin
+      let temp = '/dev/clipboard'
+    endif
     call writefile(split(a:keys, "\r", 1), temp, 'b')
     let out = system('tmux load-buffer '.temp.' \; paste-buffer -d -t '.pane_id)
   else
