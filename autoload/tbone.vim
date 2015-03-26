@@ -324,7 +324,7 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     call add(l, "\r")
   " F# and Ocaml needs ';;' to commit a block of code
   elseif &ft == 'fsharp' || &ft == 'ocaml'
-    let l[-1] .= ';;'
+    call add(l, ";;")
     let keys = join(filter(l, "v:val !~ '^\\s*//'"), "\r")
   endif
 
