@@ -340,6 +340,11 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
     let keys = join(filter(l, "v:val !~ '^\\s*#'"), "\r")
   endif
 
+  " If the line starts with a comment symbol (cms) '%', then we try to remove this comment line.
+  if &cms == '%%s'
+    let keys = join(filter(l, "v:val !~ '^\\s*%'"), "\r")
+  endif
+
   if a:count > 0
     let keys = get(g:, 'tbone_write_initialization', '').keys."\r"
   endif
