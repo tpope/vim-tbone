@@ -336,12 +336,12 @@ function! tbone#write_command(bang, line1, line2, count, target) abort
   "   \ "\r")
 
   " If the line starts with a comment symbol (cms) '#', then we try to remove this comment line.
-  if &cms == '#%s'
+  if &cms == '#%s' || &cms == '# %s'
     let keys = join(filter(l, "v:val !~ '^\\s*#'"), "\r")
   endif
 
   " If the line starts with a comment symbol (cms) '%', then we try to remove this comment line.
-  if &cms == '%%s'
+  if &cms == '%%s' || &cms == '% %s'
     let keys = join(filter(l, "v:val !~ '^\\s*%'"), "\r")
   endif
 
