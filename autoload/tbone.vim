@@ -245,7 +245,7 @@ function! tbone#mux_command(args) abort
     let signature = get(s:commands(), get(s:aliases, cmd, cmd), '')
     if signature =~# '\[-t target-session\]' && rest !~# '\s-[at]'
       let cmd .= ' -t '.g:tmux_session
-    elseif signature =~# '\[-\w*s\w*]' && signature =~# '\[-t target' && rest !~ '\s-[at]'
+    elseif signature =~# '\[-\w*s\w*]' && signature =~# '\[-t target' && rest !~# '\s-[at]'
       let cmd .= ' -s -t '.g:tmux_session
     endif
   endif
