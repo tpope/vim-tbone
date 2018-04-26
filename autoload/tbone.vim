@@ -34,27 +34,48 @@ endfunction
 
 " Section: Completion
 
+function! s:fnameescape(string) abort
+  if type(a:string) ==# type([])
+    return map(copy(a:string), 's:fnameescape(v:val)')
+  elseif exists('*fnameescape')
+    return fnameescape(a:string)
+  elseif a:string ==# '-'
+    return '\-'
+  else
+    return substitute(escape(a:string," \t\n*?[{`$\\%#'\"|!<"),'^[+>]','\\&','')
+  endif
+endfunction
+
+function! s:systemarg(cmd) abort
+  if exists('*systemlist')
+    let results = systemlist(a:cmd)
+  else
+    let results = split(system(a:cmd), "\n")
+  endif
+  return join(s:fnameescape(results), "\n")
+endfunction
+
 function! tbone#complete_sessions(...) abort
-  return system('tmux list-sessions -F "#S"')
+  return s:systemarg('tmux list-sessions -F "#S"')
 endfunction
 
 function! tbone#complete_windows(...) abort
-  return system('tmux list-windows -F "#W" -t '.shellescape(tbone#session())) .
-        \system('tmux list-windows -F "#S:#W" -a')
+  return s:systemarg('tmux list-windows -F "#W" -t '.shellescape(tbone#session())) . "\n" .
+        \s:systemarg('tmux list-windows -F "#S:#W" -a')
 endfunction
 
 function! tbone#complete_panes(...) abort
-  return system('tmux list-panes -F "#W.#P" -s -t '.shellescape(tbone#session())) .
-        \system('tmux list-panes -F "#S:#W.#P" -a') .
-        \ "last\ntop\nbottom\nleft\nright\ntop-left\ntop-right\nbottom-left\nbottom-right"
+  return s:systemarg('tmux list-panes -F "#W.#P" -s -t '.shellescape(tbone#session())) . "\n" .
+        \s:systemarg('tmux list-panes -F "#S:#W.#P" -a') .
+        \ "\nlast\ntop\nbottom\nleft\nright\ntop-left\ntop-right\nbottom-left\nbottom-right"
 endfunction
 
 function! tbone#complete_clients(...) abort
-  return system('tmux list-clients -F "#{client_tty}"')
+  return s:systemarg('tmux list-clients -F "#{client_tty}"')
 endfunction
 
 function! tbone#complete_buffers(...) abort
-  return join(range(len(split(system('tmux list-buffers'), "\n"))), "\n")
+  return s:systemarg('tmux list-buffers -F "#{buffer_name}"')
 endfunction
 
 function! tbone#complete_executable(lead, ...) abort
@@ -219,10 +240,9 @@ endfunction
 
 " Section: :Tattach
 
-function! tbone#attach_command(session) abort
-  unlet! s:our_session
-  let has_session = empty(system('tmux has-session -t '.shellescape(a:session)))
-  if empty(a:session)
+function! tbone#attach_command(...) abort
+  let has_session = a:0 && empty(system('tmux has-session -t '.shellescape(a:1)))
+  if !a:0
     unlet! g:tmux_session
     if has_session
       echo 'Using default tmux session'
@@ -230,14 +250,14 @@ function! tbone#attach_command(session) abort
       echo 'Warning: no tmux sessions exist'
     endif
     return ''
-  elseif empty(system('tmux has-session -t '.shellescape(a:session)))
-    echo 'Using tmux session "'.a:session.'"'
+  elseif empty(system('tmux has-session -t '.shellescape(a:1)))
+    echo 'Using tmux session "'.a:1.'"'
   else
     echohl WarningMsg
-    echo 'Warning: tmux session "'.a:session.'" does not exist'
+    echo 'Warning: tmux session "'.a:1.'" does not exist'
     echohl NONE
   endif
-  let g:tmux_session = a:session
+  let g:tmux_session = a:1
   return ''
 endfunction
 
@@ -261,13 +281,13 @@ endfunction
 
 " Section: :Tput, :Tyank
 
-function! tbone#buffer_command(label, buffer, before, command, after) abort
+function! tbone#buffer_command(label, before, command, after, ...) abort
   let tempfile = tempname()
   try
     if !empty(a:before)
       exe a:before tempfile
     endif
-    let error = system('tmux ' . a:command . (empty(a:buffer) ? '' : ' -b ' . shellescape(a:buffer)) . ' ' . tempfile)
+    let error = system('tmux ' . a:command . (a:0 ? ' -b ' . shellescape(a:1) : '') . ' ' . tempfile)
     if v:shell_error
       return 'echoerr '.string(error[0:-2])
     endif
@@ -307,8 +327,8 @@ function! tbone#pane_id(target) abort
   return matchstr(output, '%\d\+\ze '.offset.'\>')
 endfunction
 
-function! tbone#write_command(bang, line1, line2, count, target) abort
-  let target = empty(a:target) ? get(g:, 'tbone_write_pane', '') : a:target
+function! tbone#write_command(bang, line1, line2, count, ...) abort
+  let target = a:0 ? a:1 : get(g:, 'tbone_write_pane', '')
   if empty(target)
     return 'echoerr '.string('Target pane required')
   endif
