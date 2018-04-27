@@ -12,8 +12,8 @@ These commands will be available if and only if tmux is in your PATH.
 :Tmux [args]            Invoke an arbitrary tmux command.
 
                                                 *tbone-:Tput*
-:[line]Tput [buffer]    Put the text from the given tmux buffer (default 0)
-                        after [line] (default current line).
+:[line]Tput [buffer]    Put the text from the given tmux buffer (default most
+                        recent) after [line] (default current line).
 
                                                 *tbone-:Tyank*
 :[range]Tyank [buffer]  Yank [range] lines into the given tmux buffer (default
