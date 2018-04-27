@@ -6,7 +6,7 @@ if exists("g:autoloaded_tbone") || v:version < 700 || &cp
 endif
 let g:autoloaded_tbone = 1
 
-" Sessions {{{1
+" Section: Sessions
 
 function! tbone#session(...) abort
   if a:0 && a:1 =~# '^.\+:'
@@ -32,8 +32,7 @@ function! tbone#qualify(target)
   endif
 endfunction
 
-" }}}1
-" Completion {{{1
+" Section: Completion
 
 function! tbone#complete_sessions(...) abort
   return system('tmux list-sessions -F "#S"')
@@ -74,8 +73,6 @@ function! tbone#complete_executable(lead, ...) abort
   endfor
   return completions
 endfunction
-
-" Aliases {{{2
 
 " Stolen from the zsh tab completion
 let s:aliases = {
@@ -156,7 +153,6 @@ let s:aliases = {
       \ 'run':         'run-shell',
       \ 'info':        'server-info',
       \ }
-" }}}2
 
 function! s:commands() abort
   if !exists('g:tmux_commands')
@@ -216,8 +212,7 @@ function! tbone#complete_command(A, L, P) abort
   return ''
 endfunction
 
-" }}}1
-" :Tattach {{{1
+" Section: :Tattach
 
 function! tbone#attach_command(session) abort
   unlet! s:our_session
@@ -241,8 +236,7 @@ function! tbone#attach_command(session) abort
   return ''
 endfunction
 
-" }}}1
-" :Tmux {{{1
+" Section: :Tmux
 
 function! tbone#mux_command(args) abort
   let cmd = matchstr(a:args, '^\S\+')
@@ -260,8 +254,7 @@ function! tbone#mux_command(args) abort
   return ''
 endfunction
 
-" }}}1
-" :Tput, :Tyank {{{1
+" Section: :Tput, :Tyank
 
 function! tbone#buffer_command(label, buffer, before, command, after) abort
   let tempfile = tempname()
@@ -282,8 +275,7 @@ function! tbone#buffer_command(label, buffer, before, command, after) abort
   return ''
 endfunction
 
-" }}}1
-" :Twrite {{{1
+" Section: :Twrite
 
 " Convert a target pane to an unchanging pane id.  Returns an empty string if
 " the pane does not exist.
@@ -361,5 +353,3 @@ function! tbone#send_keys(target, keys) abort
 
   return pane_id
 endfunction
-
-" }}}1
