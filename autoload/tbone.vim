@@ -154,14 +154,19 @@ let s:aliases = {
       \ 'info':        'server-info',
       \ }
 
+unlet! s:commands
 function! s:commands() abort
-  if !exists('g:tmux_commands')
+  if !exists('s:commands')
     let lines = split(system('tmux list-commands'), "\n")
     if v:shell_error
       return {}
     endif
     let s:commands = {}
     for line in lines
+      if line =~# '^\S\+ (\S\+)'
+        let s:aliases[matchstr(line, ' (\zs\S\+\ze)')] = matchstr(line, '^\S\+')
+        let line = substitute(line, ' (\S\+)', '', '')
+      endif
       let s:commands[matchstr(line, '^\S\+')] = matchstr(line, '\s\zs\S.*')
     endfor
   endif
