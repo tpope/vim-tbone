@@ -23,7 +23,7 @@ function! tbone#qualify(target)
   let session = get(g:, 'tmux_session', '')
   if target =~# '^:'
     return session . target
-  elseif target =~# '^\%(last\|\%(top\|bottom\)\%(-left\|-right\)\=\|left\|right\)$'
+  elseif target =~# '^\%([^$!]\|[+-]\d*\|{.*}\)$'
     return get(g:, 'tmux_session', '') . ':.' . target
   elseif target =~# ':' || target =~# '^%' || !exists('g:tmux_session')
     return target
@@ -61,13 +61,17 @@ endfunction
 
 function! tbone#complete_windows(...) abort
   return s:systemarg('tmux list-windows -F "#W" -t '.shellescape(tbone#session())) . "\n" .
-        \s:systemarg('tmux list-windows -F "#S:#W" -a')
+        \s:systemarg('tmux list-windows -F "#S:#W" -a') .
+        \ "\n^\n$\n!\n+\n-\n{start}\n{end}\n{last}\n{next}\n{previous}"
 endfunction
 
 function! tbone#complete_panes(...) abort
   return s:systemarg('tmux list-panes -F "#W.#P" -s -t '.shellescape(tbone#session())) . "\n" .
         \s:systemarg('tmux list-panes -F "#S:#W.#P" -a') .
-        \ "\nlast\ntop\nbottom\nleft\nright\ntop-left\ntop-right\nbottom-left\nbottom-right"
+        \ "\n!\n+\n-\n{last}\n{next}\n{previous}" .
+        \ "\n{top}\n{bottom}\n{left}\n{right}" .
+        \ "\n{top-left}\n{top-right}\n{bottom-left}\n{bottom-right}" .
+        \ "\n{up-of}\n{down-of}\n{left-of}\n{right-of}"
 endfunction
 
 function! tbone#complete_clients(...) abort
