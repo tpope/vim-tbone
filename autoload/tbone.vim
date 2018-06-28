@@ -248,11 +248,7 @@ function! tbone#attach_command(...) abort
   let has_session = a:0 && empty(system('tmux has-session -t '.shellescape(a:1)))
   if !a:0
     unlet! g:tmux_session
-    if has_session
-      echo 'Using default tmux session'
-    else
-      echo 'Warning: no tmux sessions exist'
-    endif
+    echo 'Using default tmux session'
     return ''
   elseif empty(system('tmux has-session -t '.shellescape(a:1)))
     echo 'Using tmux session "'.a:1.'"'
