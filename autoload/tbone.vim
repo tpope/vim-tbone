@@ -20,9 +20,8 @@ endfunction
 
 function! tbone#qualify(target) abort
   let target = substitute(a:target, "\n$", '', '')
-  let session = get(g:, 'tmux_session', '')
   if target =~# '^:'
-    return session . target
+    return get(g:, 'tmux_session', '') . target
   elseif target =~# '^\%([^$!]\|[+-]\d*\|{.*}\)$'
     return get(g:, 'tmux_session', '') . ':.' . target
   elseif target =~# ':' || target =~# '^%' || !exists('g:tmux_session')
