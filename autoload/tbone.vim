@@ -18,7 +18,7 @@ function! tbone#session(...) abort
   endif
 endfunction
 
-function! tbone#qualify(target)
+function! tbone#qualify(target) abort
   let target = substitute(a:target, "\n$", '', '')
   let session = get(g:, 'tmux_session', '')
   if target =~# '^:'
