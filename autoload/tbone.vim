@@ -1,7 +1,7 @@
 " autoload/tbone.vim
 " Maintainer:   Tim Pope <http://tpo.pe/>
 
-if exists("g:autoloaded_tbone") || v:version < 700 || &cp
+if exists('g:autoloaded_tbone') || v:version < 700 || &compatible
   finish
 endif
 let g:autoloaded_tbone = 1
