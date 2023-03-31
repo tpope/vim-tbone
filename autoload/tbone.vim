@@ -161,6 +161,7 @@ let s:aliases = {
       \
       \ 'confirm':     'confirm-before',
       \ 'display':     'display-message',
+      \ 'popup':       'display-popup',
       \
       \ 'clearhist':   'clear-history',
       \ 'copyb':       'copy-buffer',
