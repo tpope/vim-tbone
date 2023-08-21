@@ -302,8 +302,8 @@ endfunction
 
 " Section: :Twrite
 
-" Convert a target pane to an unchanging pane id.  Returns an empty string if
-" the pane does not exist.
+" Convert a target pane to an unchanging pane id (across tmux session).
+" Returns an empty string if the pane does not exist.
 function! tbone#pane_id(target) abort
   if a:target =~# '^%'
     return index(split(system('tmux list-panes -a -F "#{pane_id}"'), "\n"), a:target) < 0 ?  '' : a:target
