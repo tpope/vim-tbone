@@ -333,10 +333,18 @@ function! tbone#write_command(bang, line1, line2, count, ...) abort
     return 'echoerr '.string('Target pane required')
   endif
 
-  let keys = join(map(
-        \ getline(a:line1, a:line2),
-        \ 'substitute(v:val,"^\\s*","","")'),
-        \ "\r")
+  if a:bang
+      let keys = join(map(
+            \ getline(a:line1, a:line2),
+            \ 'v:val'),
+            \ "\r")
+  else
+      let keys = join(map(
+            \ getline(a:line1, a:line2),
+            \ 'substitute(v:val,"^\\s*","","")'),
+            \ "\r")
+  endif
+
   if a:count > 0
     let keys = get(g:, 'tbone_write_initialization', '').keys."\r"
   endif
